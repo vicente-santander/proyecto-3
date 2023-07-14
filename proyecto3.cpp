@@ -120,6 +120,15 @@ void MergeSort(vector<int>& arr, int left, int right, bool ascendente) {
 }
 
 int Partition(vector<int>& arr, int low, int high, bool ascendente) {
+    // Elegir un pivote aleatorio dentro del rango de partición
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> dis(low, high);
+    int random_pivot_index = dis(gen);
+
+    // Intercambiar el pivote con el último elemento
+    swap(arr[random_pivot_index], arr[high]);
+
     int pivot = arr[high];
     int i = low - 1;
 
@@ -133,6 +142,7 @@ int Partition(vector<int>& arr, int low, int high, bool ascendente) {
     swap(arr[i + 1], arr[high]);
     return i + 1;
 }
+
 
 void QuickSort(vector<int>& arr, int low, int high, bool ascendente) {
     if (low < high) {
@@ -184,7 +194,6 @@ void ShellSort(vector<int>& arr, bool ascendente) {
         }
     }
 }
-
 
 void heapSort(vector<int>& arr) {
     int n = arr.size();
@@ -285,26 +294,135 @@ int main() {
 
     int num_count = 100000; // Cantidad de números aleatorios
 
-    unordered_map<int, int> numerosSinRepetir = generarNumerosAleatoriosSinRepetir(0, 1000000, num_count);
-    vector<int> numerosSinRepetirVec(num_count);
+    // Generar conjunto de datos ordenado
+    vector<int> datosOrdenados(num_count);
+    for (int i = 0; i < num_count; i++) {
+        datosOrdenados[i] = i;
+    }
+
+    // Generar conjunto de datos inversamente ordenado
+    vector<int> datosInversos(num_count);
+    for (int i = 0; i < num_count; i++) {
+        datosInversos[i] = num_count - i - 1;
+    }
+
+    // Generar conjunto de datos aleatorios sin repetición
+    unordered_map<int, int> numerosSinRepetir = generarNumerosAleatoriosSinRepetir(0, num_count * 10, num_count);
+    vector<int> datosAleatoriosSinRepetir(num_count);
     int index = 0;
     for (const auto& pair : numerosSinRepetir) {
-        numerosSinRepetirVec[index++] = pair.first;
+        datosAleatoriosSinRepetir[index++] = pair.first;
     }
 
-    vector<int> numerosConDuplicados(num_count);
+    // Generar conjunto de datos aleatorios con duplicados
+    vector<int> datosAleatoriosConDuplicados(num_count);
     for (int i = 0; i < num_count; i++) {
-        numerosConDuplicados[i] = i % 10001 + 90000; // Genera números del 90000 al 100000 repetidos
+        datosAleatoriosConDuplicados[i] = i % (num_count); 
     }
 
-    double time_taken_selection_sort = getTimeTakenSelectionSort(numerosSinRepetirVec, ascendente);
-    double time_taken_bubble_sort = getTimeTakenBubbleSort(numerosSinRepetirVec, ascendente);
-    double time_taken_insertion_sort = getTimeTakenInsertionSort(numerosSinRepetirVec, ascendente);
-    double time_taken_merge_sort = getTimeTakenMergeSort(numerosSinRepetirVec, ascendente);
-    double time_taken_quick_sort = getTimeTakenQuickSort(numerosSinRepetirVec, ascendente);
-    double time_taken_heap_sort = getTimeTakenHeapSort(numerosSinRepetirVec);
-    double time_taken_shell_sort = getTimeTakenShellSort(numerosSinRepetirVec, ascendente);
-	double time_taken_shell_sort_dup = getTimeTakenShellSort(numerosConDuplicados, ascendente);
+    double time_taken_selection_sort, time_taken_bubble_sort, time_taken_insertion_sort,
+        time_taken_merge_sort, time_taken_quick_sort, time_taken_heap_sort, time_taken_shell_sort;
+
+    // Carrera por el Tablero: Modo Ordenado
+    time_taken_selection_sort = getTimeTakenSelectionSort(datosOrdenados, ascendente);
+    time_taken_bubble_sort = getTimeTakenBubbleSort(datosOrdenados, ascendente);
+    time_taken_insertion_sort = getTimeTakenInsertionSort(datosOrdenados, ascendente);
+    time_taken_merge_sort = getTimeTakenMergeSort(datosOrdenados, ascendente);
+    time_taken_quick_sort = getTimeTakenQuickSort(datosOrdenados, ascendente);
+    time_taken_heap_sort = getTimeTakenHeapSort(datosOrdenados);
+    time_taken_shell_sort = getTimeTakenShellSort(datosOrdenados, ascendente);
+
+    cout << "Carrera por el Tablero: Modo Ordenado" << endl;
+    cout << "1. Selection Sort, " << time_taken_selection_sort << " segundos." << endl;
+    cout << "2. Bubble Sort, " << time_taken_bubble_sort << " segundos." << endl;
+    cout << "3. Insertion Sort, " << time_taken_insertion_sort << " segundos." << endl;
+    cout << "4. Merge Sort, " << time_taken_merge_sort << " segundos." << endl;
+    cout << "5. Quick Sort, " << time_taken_quick_sort << " segundos." << endl;
+    cout << "6. Heap Sort, " << time_taken_heap_sort << " segundos." << endl;
+    cout << "7. Shell Sort, " << time_taken_shell_sort << " segundos." << endl;
+
+    double tiempo_ganador_ordenado = min(time_taken_selection_sort,
+        min(time_taken_bubble_sort,
+            min(time_taken_insertion_sort,
+                min(time_taken_merge_sort,
+                    min(time_taken_quick_sort,
+                        min(time_taken_heap_sort, time_taken_shell_sort)
+                    )
+                )
+            )
+        )
+    );
+
+    if (tiempo_ganador_ordenado == time_taken_selection_sort) {
+        cout << "El ganador es: Selection Sort con un tiempo de " << tiempo_ganador_ordenado << " segundos." << endl;
+    } else if (tiempo_ganador_ordenado == time_taken_bubble_sort) {
+        cout << "El ganador es: Bubble Sort con un tiempo de " << tiempo_ganador_ordenado << " segundos." << endl;
+    } else if (tiempo_ganador_ordenado == time_taken_insertion_sort) {
+        cout << "El ganador es: Insertion Sort con un tiempo de " << tiempo_ganador_ordenado << " segundos." << endl;
+    } else if (tiempo_ganador_ordenado == time_taken_merge_sort) {
+        cout << "El ganador es: Merge Sort con un tiempo de " << tiempo_ganador_ordenado << " segundos." << endl;
+    } else if (tiempo_ganador_ordenado == time_taken_quick_sort) {
+        cout << "El ganador es: Quick Sort con un tiempo de " << tiempo_ganador_ordenado << " segundos." << endl;
+    } else if(tiempo_ganador_ordenado == time_taken_heap_sort){
+        cout << "El ganador es: Heap Sort con un tiempo de " << tiempo_ganador_ordenado << " segundos." << endl;
+    }else{
+        cout << "El ganador es: Shell Sort con un tiempo de " << tiempo_ganador_ordenado << " segundos." << endl;
+    }
+
+    // Carrera por el Tablero: Modo Inversamente Ordenado
+    time_taken_selection_sort = getTimeTakenSelectionSort(datosInversos, ascendente);
+    time_taken_bubble_sort = getTimeTakenBubbleSort(datosInversos, ascendente);
+    time_taken_insertion_sort = getTimeTakenInsertionSort(datosInversos, ascendente);
+    time_taken_merge_sort = getTimeTakenMergeSort(datosInversos, ascendente);
+    time_taken_quick_sort = getTimeTakenQuickSort(datosInversos, ascendente);
+    time_taken_heap_sort = getTimeTakenHeapSort(datosInversos);
+    time_taken_shell_sort = getTimeTakenShellSort(datosInversos, ascendente);
+
+    cout << "Carrera por el Tablero: Modo inversamente ordenado" << endl;
+    cout << "1. Selection Sort, " << time_taken_selection_sort << " segundos." << endl;
+    cout << "2. Bubble Sort, " << time_taken_bubble_sort << " segundos." << endl;
+    cout << "3. Insertion Sort, " << time_taken_insertion_sort << " segundos." << endl;
+    cout << "4. Merge Sort, " << time_taken_merge_sort << " segundos." << endl;
+    cout << "5. Quick Sort, " << time_taken_quick_sort << " segundos." << endl;
+    cout << "6. Heap Sort, " << time_taken_heap_sort << " segundos." << endl;
+    cout << "7. Shell Sort, " << time_taken_shell_sort << " segundos." << endl;
+
+    double tiempo_ganador_inverso = min(time_taken_selection_sort,
+        min(time_taken_bubble_sort,
+            min(time_taken_insertion_sort,
+                min(time_taken_merge_sort,
+                    min(time_taken_quick_sort,
+                        min(time_taken_heap_sort, time_taken_shell_sort)
+                    )
+                )
+            )
+        )
+    );
+
+    if (tiempo_ganador_inverso == time_taken_selection_sort) {
+        cout << "El ganador es: Selection Sort con un tiempo de " << tiempo_ganador_inverso << " segundos." << endl;
+    } else if (tiempo_ganador_inverso == time_taken_bubble_sort) {
+        cout << "El ganador es: Bubble Sort con un tiempo de " << tiempo_ganador_inverso << " segundos." << endl;
+    } else if (tiempo_ganador_inverso == time_taken_insertion_sort) {
+        cout << "El ganador es: Insertion Sort con un tiempo de " << tiempo_ganador_inverso << " segundos." << endl;
+    } else if (tiempo_ganador_inverso == time_taken_merge_sort) {
+        cout << "El ganador es: Merge Sort con un tiempo de " << tiempo_ganador_inverso << " segundos." << endl;
+    } else if (tiempo_ganador_inverso == time_taken_quick_sort) {
+        cout << "El ganador es: Quick Sort con un tiempo de " << tiempo_ganador_inverso << " segundos." << endl;
+    } else if(tiempo_ganador_inverso == time_taken_heap_sort){
+        cout << "El ganador es: Heap Sort con un tiempo de " << tiempo_ganador_inverso << " segundos." << endl;
+    }else{
+        cout << "El ganador es: Shell Sort con un tiempo de " << tiempo_ganador_inverso << " segundos." << endl;
+    }
+
+    // Carrera por el Tablero: Modo Aleatorio sin repetición
+    time_taken_selection_sort = getTimeTakenSelectionSort(datosAleatoriosSinRepetir, ascendente);
+    time_taken_bubble_sort = getTimeTakenBubbleSort(datosAleatoriosSinRepetir, ascendente);
+    time_taken_insertion_sort = getTimeTakenInsertionSort(datosAleatoriosSinRepetir, ascendente);
+    time_taken_merge_sort = getTimeTakenMergeSort(datosAleatoriosSinRepetir, ascendente);
+    time_taken_quick_sort = getTimeTakenQuickSort(datosAleatoriosSinRepetir, ascendente);
+    time_taken_heap_sort = getTimeTakenHeapSort(datosAleatoriosSinRepetir);
+    time_taken_shell_sort = getTimeTakenShellSort(datosAleatoriosSinRepetir, ascendente);
 
     cout << "Carrera por el Tablero: Modo aleatorio sin repetición" << endl;
     cout << "1. Selection Sort, " << time_taken_selection_sort << " segundos." << endl;
@@ -316,16 +434,16 @@ int main() {
     cout << "7. Shell Sort, " << time_taken_shell_sort << " segundos." << endl;
 
     double tiempo_ganador_sin_repetir = min(time_taken_selection_sort,
-	    min(time_taken_bubble_sort,
-	        min(time_taken_insertion_sort,
-	            min(time_taken_merge_sort,
-	                min(time_taken_quick_sort,
-	                    min(time_taken_heap_sort, time_taken_shell_sort)
-	                )
-	            )
-	        )
-	    )
-	);
+        min(time_taken_bubble_sort,
+            min(time_taken_insertion_sort,
+                min(time_taken_merge_sort,
+                    min(time_taken_quick_sort,
+                        min(time_taken_heap_sort, time_taken_shell_sort)
+                    )
+                )
+            )
+        )
+    );
 
     if (tiempo_ganador_sin_repetir == time_taken_selection_sort) {
         cout << "El ganador es: Selection Sort con un tiempo de " << tiempo_ganador_sin_repetir << " segundos." << endl;
@@ -340,52 +458,54 @@ int main() {
     } else if(tiempo_ganador_sin_repetir == time_taken_heap_sort){
         cout << "El ganador es: Heap Sort con un tiempo de " << tiempo_ganador_sin_repetir << " segundos." << endl;
     }else{
-    	cout << "El ganador es: Shell Sort con un tiempo de " << tiempo_ganador_sin_repetir << " segundos." << endl;
-	}
+        cout << "El ganador es: Shell Sort con un tiempo de " << tiempo_ganador_sin_repetir << " segundos." << endl;
+    }
 
-    double time_taken_selection_sort_dup = getTimeTakenSelectionSort(numerosConDuplicados, ascendente);
-    double time_taken_bubble_sort_dup = getTimeTakenBubbleSort(numerosConDuplicados, ascendente);
-    double time_taken_insertion_sort_dup = getTimeTakenInsertionSort(numerosConDuplicados, ascendente);
-    double time_taken_merge_sort_dup = getTimeTakenMergeSort(numerosConDuplicados, ascendente);
-    double time_taken_quick_sort_dup = getTimeTakenQuickSort(numerosConDuplicados, ascendente);
-    double time_taken_heap_sort_dup = getTimeTakenHeapSort(numerosConDuplicados);
+    // Carrera por el Tablero: Modo Aleatorio con duplicados
+    time_taken_selection_sort = getTimeTakenSelectionSort(datosAleatoriosConDuplicados, ascendente);
+    time_taken_bubble_sort = getTimeTakenBubbleSort(datosAleatoriosConDuplicados, ascendente);
+    time_taken_insertion_sort = getTimeTakenInsertionSort(datosAleatoriosConDuplicados, ascendente);
+    time_taken_merge_sort = getTimeTakenMergeSort(datosAleatoriosConDuplicados, ascendente);
+    time_taken_quick_sort = getTimeTakenQuickSort(datosAleatoriosConDuplicados, ascendente);
+    time_taken_heap_sort = getTimeTakenHeapSort(datosAleatoriosConDuplicados);
+    time_taken_shell_sort = getTimeTakenShellSort(datosAleatoriosConDuplicados, ascendente);
 
     cout << "Carrera por el Tablero: Modo aleatorio con duplicados" << endl;
-    cout << "1. Selection Sort, " << time_taken_selection_sort_dup << " segundos." << endl;
-    cout << "2. Bubble Sort, " << time_taken_bubble_sort_dup << " segundos." << endl;
-    cout << "3. Insertion Sort, " << time_taken_insertion_sort_dup << " segundos." << endl;
-    cout << "4. Merge Sort, " << time_taken_merge_sort_dup << " segundos." << endl;
-    cout << "5. Quick Sort, " << time_taken_quick_sort_dup << " segundos." << endl;
-    cout << "6. Heap Sort, " << time_taken_heap_sort_dup << " segundos." << endl;
+    cout << "1. Selection Sort, " << time_taken_selection_sort << " segundos." << endl;
+    cout << "2. Bubble Sort, " << time_taken_bubble_sort << " segundos." << endl;
+    cout << "3. Insertion Sort, " << time_taken_insertion_sort << " segundos." << endl;
+    cout << "4. Merge Sort, " << time_taken_merge_sort << " segundos." << endl;
+    cout << "5. Quick Sort, " << time_taken_quick_sort << " segundos." << endl;
+    cout << "6. Heap Sort, " << time_taken_heap_sort << " segundos." << endl;
     cout << "7. Shell Sort, " << time_taken_shell_sort << " segundos." << endl;
 
-    double tiempo_ganador_duplicados = min(time_taken_selection_sort_dup,
-	    min(time_taken_bubble_sort_dup,
-	        min(time_taken_insertion_sort_dup,
-	            min(time_taken_merge_sort_dup,
-	                min(time_taken_quick_sort_dup,
-	                    min(time_taken_heap_sort_dup, time_taken_shell_sort_dup)
-	                )
-	            )
-	        )
-	    )
-	);
+    double tiempo_ganador_con_duplicados = min(time_taken_selection_sort,
+        min(time_taken_bubble_sort,
+            min(time_taken_insertion_sort,
+                min(time_taken_merge_sort,
+                    min(time_taken_quick_sort,
+                        min(time_taken_heap_sort, time_taken_shell_sort)
+                    )
+                )
+            )
+        )
+    );
 
-    if (tiempo_ganador_duplicados == time_taken_selection_sort_dup) {
-        cout << "El ganador es: Selection Sort con un tiempo de " << tiempo_ganador_duplicados << " segundos." << endl;
-    } else if (tiempo_ganador_duplicados == time_taken_bubble_sort_dup) {
-        cout << "El ganador es: Bubble Sort con un tiempo de " << tiempo_ganador_duplicados << " segundos." << endl;
-    } else if (tiempo_ganador_duplicados == time_taken_insertion_sort_dup) {
-        cout << "El ganador es: Insertion Sort con un tiempo de " << tiempo_ganador_duplicados << " segundos." << endl;
-    } else if (tiempo_ganador_duplicados == time_taken_merge_sort_dup) {
-        cout << "El ganador es: Merge Sort con un tiempo de " << tiempo_ganador_duplicados << " segundos." << endl;
-    } else if (tiempo_ganador_duplicados == time_taken_quick_sort_dup) {
-        cout << "El ganador es: Quick Sort con un tiempo de " << tiempo_ganador_duplicados << " segundos." << endl;
-    } else if(tiempo_ganador_duplicados == time_taken_heap_sort_dup){
-        cout << "El ganador es: Heap Sort con un tiempo de " << tiempo_ganador_duplicados << " segundos." << endl;
+    if (tiempo_ganador_con_duplicados == time_taken_selection_sort) {
+        cout << "El ganador es: Selection Sort con un tiempo de " << tiempo_ganador_con_duplicados << " segundos." << endl;
+    } else if (tiempo_ganador_con_duplicados == time_taken_bubble_sort) {
+        cout << "El ganador es: Bubble Sort con un tiempo de " << tiempo_ganador_con_duplicados << " segundos." << endl;
+    } else if (tiempo_ganador_con_duplicados == time_taken_insertion_sort) {
+        cout << "El ganador es: Insertion Sort con un tiempo de " << tiempo_ganador_con_duplicados << " segundos." << endl;
+    } else if (tiempo_ganador_con_duplicados == time_taken_merge_sort) {
+        cout << "El ganador es: Merge Sort con un tiempo de " << tiempo_ganador_con_duplicados << " segundos." << endl;
+    } else if (tiempo_ganador_con_duplicados == time_taken_quick_sort) {
+        cout << "El ganador es: Quick Sort con un tiempo de " << tiempo_ganador_con_duplicados << " segundos." << endl;
+    } else if(tiempo_ganador_con_duplicados == time_taken_heap_sort){
+        cout << "El ganador es: Heap Sort con un tiempo de " << tiempo_ganador_con_duplicados << " segundos." << endl;
     }else{
-    	cout << "El ganador es: Shell Sort con un tiempo de " << tiempo_ganador_duplicados << " segundos." << endl;
-	}
+        cout << "El ganador es: Shell Sort con un tiempo de " << tiempo_ganador_con_duplicados << " segundos." << endl;
+    }
 
     return 0;
 }
