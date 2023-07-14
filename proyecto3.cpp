@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <chrono>
 
+
 using namespace std;
 
 unordered_map<int, int> generarNumerosAleatoriosSinRepetir(int min, int max, int cantidad) {
@@ -18,6 +19,21 @@ unordered_map<int, int> generarNumerosAleatoriosSinRepetir(int min, int max, int
     while (numeros.size() < cantidad) {
         int numero = dis(gen);
         numeros[numero]++;
+    }
+
+    return numeros;
+}
+
+vector<int> generarNumerosAleatoriosConDuplicados(int min, int max, int cantidad) {
+    vector<int> numeros;
+
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> dis(min, max);
+
+    for (int i = 0; i < cantidad; i++) {
+        int numero = dis(gen);
+        numeros.push_back(numero);
     }
 
     return numeros;
@@ -292,13 +308,22 @@ int main() {
         return 0;
     }
 
-    int num_count = 100000; // Cantidad de números aleatorios
-
+    // Generar un número aleatorio entre 90,000 y 100,000
+	random_device rd;
+	mt19937 gen(rd());
+	uniform_int_distribution<int> count_dis(90000, 100000);
+	int num_count = count_dis(gen);	
+	
     // Generar conjunto de datos ordenado
     vector<int> datosOrdenados(num_count);
     for (int i = 0; i < num_count; i++) {
         datosOrdenados[i] = i;
     }
+    
+    // Determinar el total de elementos en num_count
+	int total_elementos = datosOrdenados.size();
+	
+	cout << "Total de elementos en num_count: " << total_elementos << endl;
 
     // Generar conjunto de datos inversamente ordenado
     vector<int> datosInversos(num_count);
