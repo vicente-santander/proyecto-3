@@ -318,6 +318,7 @@ int main() {
     vector<int> datosOrdenados(num_count);
     for (int i = 0; i < num_count; i++) {
         datosOrdenados[i] = i;
+        
     }
     
     // Determinar el total de elementos en num_count
@@ -329,10 +330,11 @@ int main() {
     vector<int> datosInversos(num_count);
     for (int i = 0; i < num_count; i++) {
         datosInversos[i] = num_count - i - 1;
+        //cout << datosInversos[i] << endl;
     }
 
     // Generar conjunto de datos aleatorios sin repetición
-    unordered_map<int, int> numerosSinRepetir = generarNumerosAleatoriosSinRepetir(0, num_count * 10, num_count);
+    unordered_map<int, int> numerosSinRepetir = generarNumerosAleatoriosSinRepetir(0, num_count, num_count);
     vector<int> datosAleatoriosSinRepetir(num_count);
     int index = 0;
     for (const auto& pair : numerosSinRepetir) {
