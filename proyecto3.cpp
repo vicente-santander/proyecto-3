@@ -9,13 +9,16 @@
 
 using namespace std;
 
+// Función para generar números aleatorios sin repetir en el rango [min, max]
 unordered_map<int, int> generarNumerosAleatoriosSinRepetir(int min, int max, int cantidad) {
     unordered_map<int, int> numeros;
 
+	// Crear un generador de números aleatorios
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<int> dis(min, max);
 
+	// Generar números hasta alcanzar la cantidad deseada sin repetir
     while (numeros.size() < cantidad) {
         int numero = dis(gen);
         numeros[numero]++;
@@ -24,13 +27,16 @@ unordered_map<int, int> generarNumerosAleatoriosSinRepetir(int min, int max, int
     return numeros;
 }
 
+// Función para generar números aleatorios con duplicados en el rango [min, max]
 vector<int> generarNumerosAleatoriosConDuplicados(int min, int max, int cantidad) {
     vector<int> numeros;
 
+	// Crear un generador de números aleatorios
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<int> dis(min, max);
-
+	
+	// Generar números aleatorios y agregarlos al vector
     for (int i = 0; i < cantidad; i++) {
         int numero = dis(gen);
         numeros.push_back(numero);
@@ -40,15 +46,19 @@ vector<int> generarNumerosAleatoriosConDuplicados(int min, int max, int cantidad
 }
 
 void SelectionSort(vector<int>& arr, bool ascendente) {
-    int n = arr.size();
+    // Obtener la cantidad de elementos en el arreglo
+	int n = arr.size();
 
+	// Recorrer el arreglo para encontrar el valor mínimo o máximo en cada iteración
     for (int i = 0; i < n - 1; i++) {
         int minIndex = i;
         for (int j = i + 1; j < n; j++) {
+        	// Comprobar si el elemento actual es menor (o mayor, según ascendente) que el mínimo (o máximo)
             if ((ascendente && arr[j] < arr[minIndex]) || (!ascendente && arr[j] > arr[minIndex])) {
                 minIndex = j;
             }
         }
+        // Intercambiar el elemento actual con el mínimo (o máximo) encontrado
         swap(arr[i], arr[minIndex]);
     }
 }
@@ -56,8 +66,10 @@ void SelectionSort(vector<int>& arr, bool ascendente) {
 void BubbleSort(vector<int>& arr, bool ascendente) {
     int n = arr.size();
 
+	// Recorrer el arreglo y comparar elementos adyacentes, intercambiándolos si es necesario
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
+        	// Comprobar si el elemento actual es mayor (o menor, según ascendente) que el siguiente
             if ((ascendente && arr[j] > arr[j + 1]) || (!ascendente && arr[j] < arr[j + 1])) {
                 swap(arr[j], arr[j + 1]);
             }
@@ -68,15 +80,17 @@ void BubbleSort(vector<int>& arr, bool ascendente) {
 void InsertionSort(vector<int>& arr, bool ascendente) {
     int n = arr.size();
 
+	// Recorrer el arreglo e insertar cada elemento en la posición correcta del arreglo ordenado
     for (int i = 1; i < n; i++) {
         int key = arr[i];
         int j = i - 1;
-
+		
+		// Mover elementos mayores (o menores, según ascendente) hacia la derecha para insertar el elemento actual
         while (j >= 0 && ((ascendente && arr[j] > key) || (!ascendente && arr[j] < key))) {
             arr[j + 1] = arr[j];
             j--;
         }
-
+		// Insertar el elemento actual en su posición correcta
         arr[j + 1] = key;
     }
 }
@@ -87,7 +101,8 @@ void Merge(vector<int>& arr, int left, int middle, int right, bool ascendente) {
 
     vector<int> L(n1);
     vector<int> R(n2);
-
+	
+	// Copiar los elementos de los subarreglos en arreglos temporales
     for (int i = 0; i < n1; i++) {
         L[i] = arr[left + i];
     }
@@ -99,7 +114,8 @@ void Merge(vector<int>& arr, int left, int middle, int right, bool ascendente) {
     int i = 0;
     int j = 0;
     int k = left;
-
+    
+	// Comparar y mezclar los elementos de los subarreglos
     while (i < n1 && j < n2) {
         if ((ascendente && L[i] <= R[j]) || (!ascendente && L[i] >= R[j])) {
             arr[k] = L[i];
@@ -110,7 +126,7 @@ void Merge(vector<int>& arr, int left, int middle, int right, bool ascendente) {
         }
         k++;
     }
-
+	// Copiar los elementos restantes de los subarreglos en el arreglo original
     while (i < n1) {
         arr[k] = L[i];
         i++;
@@ -127,14 +143,16 @@ void Merge(vector<int>& arr, int left, int middle, int right, bool ascendente) {
 void MergeSort(vector<int>& arr, int left, int right, bool ascendente) {
     if (left < right) {
         int middle = left + (right - left) / 2;
-
+		// Dividir el arreglo en dos mitades y ordenar cada mitad recursivamente
         MergeSort(arr, left, middle, ascendente);
         MergeSort(arr, middle + 1, right, ascendente);
-
+		
+		// Mezclar las dos mitades ordenadas
         Merge(arr, left, middle, right, ascendente);
     }
 }
 
+// Función auxiliar para el algoritmo Quick Sort, particiona el arreglo en dos subarreglos
 int Partition(vector<int>& arr, int low, int high, bool ascendente) {
     // Elegir un pivote aleatorio dentro del rango de partición
     random_device rd;
@@ -147,14 +165,16 @@ int Partition(vector<int>& arr, int low, int high, bool ascendente) {
 
     int pivot = arr[high];
     int i = low - 1;
-
+    
+	// Recorrer el arreglo y colocar los elementos menores (o mayores, según ascendente) que el pivote a la izquierda
     for (int j = low; j <= high - 1; j++) {
         if ((ascendente && arr[j] < pivot) || (!ascendente && arr[j] > pivot)) {
             i++;
             swap(arr[i], arr[j]);
         }
     }
-
+    
+	// Colocar el pivote en su posición correcta
     swap(arr[i + 1], arr[high]);
     return i + 1;
 }
@@ -162,13 +182,16 @@ int Partition(vector<int>& arr, int low, int high, bool ascendente) {
 
 void QuickSort(vector<int>& arr, int low, int high, bool ascendente) {
     if (low < high) {
-        int pi = Partition(arr, low, high, ascendente);
+    	// Obtener el índice de partición
+        int pivotIndex = Partition(arr, low, high, ascendente);
 
-        QuickSort(arr, low, pi - 1, ascendente);
-        QuickSort(arr, pi + 1, high, ascendente);
+        // Ordenar recursivamente los subarreglos antes y después del pivote
+        QuickSort(arr, low, pivotIndex - 1, ascendente);
+        QuickSort(arr, pivotIndex + 1, high, ascendente);
     }
 }
 
+// Función auxiliar para el algoritmo Heap Sort, asegura que el subárbol con raíz en el índice i sea un heap
 void heapify(vector<int>& arr, int n, int i) {
     int largest = i; // Inicializar el nodo raíz como el más grande
     int left = 2 * i + 1; // Índice del hijo izquierdo
@@ -196,8 +219,10 @@ void heapify(vector<int>& arr, int n, int i) {
 void ShellSort(vector<int>& arr, bool ascendente) {
     int n = arr.size();
 
+	// Calcular el espacio (gap) inicial
     for (int gap = n / 2; gap > 0; gap /= 2) {
         for (int i = gap; i < n; i++) {
+        	// Insertion Sort con el espacio (gap) actual
             int temp = arr[i];
             int j = i;
 
